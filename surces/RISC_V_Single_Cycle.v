@@ -84,7 +84,7 @@ CONTROL_UNIT
 	.ALU_Src_o(alu_src_w),
 	.Reg_Write_o(reg_write_w),
 	.Mem_to_Reg_o(mem_to_reg_w),
-	.Mem_Read_o(mem_read_w)
+	.Mem_Read_o(mem_read_w),
 	.Mem_Write_o(mem_write_w)
 );
 
