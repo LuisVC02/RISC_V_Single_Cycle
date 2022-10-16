@@ -25,12 +25,41 @@ module Control
 	output [2:0]ALU_Op_o
 );
 
+localparam R_type = 7'b0110011;
+localparam I_logic_type = 7'b0010011;
+localparam I_charge_type = 7'b0000011;
+localparam S_type = 7'b0100011;
+localparam B_type = 7'b1100011;
+localparam U_type = 7'b0110111;
 
 reg [8:0] control_values;
 
 always@(OP_i) begin
-	case(OP_i)//                          876_54_3_210
-
+	case(OP_i)//                          876_54_3_210		
+		R_type:
+			begin
+				control_values = 9'b0_0100_0_000;
+			end
+	
+		I_logic_type:
+			begin
+				control_values = 9'b0_0100_1_000;
+			end
+			
+		S_type:
+			begin
+				control_values = 9'b0_0001_0_000;
+			end
+			
+		B_type:
+			begin
+				control_values = 9'b1_0000_1_001;
+			end
+			
+		U_type:
+			begin
+				control_values = 9'b0_0100_1_010;
+			end
 
 		default:
 			control_values= 9'b000_00_000;
