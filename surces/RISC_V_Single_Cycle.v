@@ -170,7 +170,7 @@ MUX_DATA_OR_IMM_FOR_ALU
 ALU_Control
 ALU_CONTROL_UNIT
 (
-	.funct7_i(instruction_bus_w[30]),
+	.funct7_i(instruction_bus_w[29]),
 	.ALU_Op_i(alu_op_w),
 	.funct3_i(instruction_bus_w[14:12]),
 	.ALU_Operation_o(alu_operation_w)
