@@ -21,12 +21,23 @@ module Immediate_Unit
 
 
 
-always@(op_i) begin
-
-	if(op_i == 7'h13)
-		Immediate_o = {{20{Instruction_bus_i[31]}},Instruction_bus_i[31:20]};// I format
-	else
-		Immediate_o = 0;// U format
+always@(Instruction_bus_i) begin
+	case(op_i)
+		7'h13:
+			begin
+				Immediate_o = {{20{Instruction_bus_i[31]}},Instruction_bus_i[31:20]};// I format
+			end
+			
+		7'h37:
+			begin
+				Immediate_o = {12'h0000,Instruction_bus_i[31:12]};
+			end
+			
+		default:
+			begin
+				Immediate_o = 0;
+			end
+	endcase
 end
 
 
