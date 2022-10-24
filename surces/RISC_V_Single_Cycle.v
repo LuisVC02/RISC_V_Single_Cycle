@@ -37,6 +37,7 @@ module RISC_V_Single_Cycle
 /* Signals to connect modules*/
 
 /**Control**/
+wire branch_w;
 wire alu_src_w;
 wire reg_write_w;
 wire mem_to_reg_w;
@@ -45,7 +46,13 @@ wire mem_read_w;
 wire [2:0] alu_op_w;
 
 /** Program Counter**/
+wire [31:0] pc_mux_jal;
 wire [31:0] pc_plus_4_w;
+wire [31:0] pc_plus_inm;
+wire [31:0] pc_plus_reg;
+wire [31:0] pc_plus_inm_reg;
+wire [31:0] mux_inm_reg;
+wire [31:0] pc_mux;
 wire [31:0] pc_w;
 
 
@@ -80,6 +87,7 @@ CONTROL_UNIT
 	/****/
 	.OP_i(instruction_bus_w[6:0]),
 	/** outputus**/
+	.Branch_o(branch_w),
 	.ALU_Op_o(alu_op_w),
 	.ALU_Src_o(alu_src_w),
 	.Reg_Write_o(reg_write_w),
@@ -110,13 +118,63 @@ PC_PLUS_4
 	.Result(pc_plus_4_w)
 );
 
+Adder_32_Bits //  Sumador de inmediatos al program counter
+PC_PLUS_INM
+(
+	.Data0(pc_w),
+	.Data1(inmmediate_data_w),
+	
+	.Result(pc_plus_inm)
+);
+
+Adder_32_Bits //  Sumador de inmediatos al program counter
+PC_PLUS_REG
+(
+	.Data0(pc_plus_inm),
+	.Data1(read_data_1_w),
+	
+	.Result(pc_plus_inm_reg)
+);
+
 PC_Register
 PC(
 	.clk(clk),
 	.reset(reset),
-	.Next_PC(pc_plus_4_w),
+	.Next_PC(pc_mux),
 	.PC_Value(pc_w)
 );
+
+// Multiplexor de 4 o MUX Inm reg -------------
+Multiplexer_2_to_1
+#(
+	.NBits(32)
+)
+MUX_FOR_4_INM_REG
+(
+	.Selector_i(branch_w),
+	.Mux_Data_0_i(pc_plus_4_w),
+	.Mux_Data_1_i(mux_inm_reg),
+	
+	.Mux_Output_o(pc_mux)
+
+);
+
+// Multiplexor de inmediato o registro -----
+Multiplexer_2_to_1
+#(
+	.NBits(32)
+)
+MUX_FOR_INM_REG
+(
+	.Selector_i(0),
+	.Mux_Data_0_i(pc_plus_inm),
+	.Mux_Data_1_i(pc_plus_inm_reg),
+	
+	.Mux_Output_o(mux_inm_reg)
+
+);
+
+// -----------------------------------------
 
 //******************************************************************/
 //******************************************************************/
