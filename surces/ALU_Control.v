@@ -43,7 +43,7 @@ always@(selector)begin
 			end
 			
 		// BRANCH
-		7'b0_001_000: 
+		7'bX_001_000: 
 			begin	
 				alu_control_values = 4'b0_001;
 			end
@@ -55,27 +55,16 @@ always@(selector)begin
 			end
 			
 		// BRANCH !=
-		7'b0_001_001: 
+		7'bX_001_001: 
 			begin
 				alu_control_values = 4'b0_001;
 			end
 			
-		// LESS THAN
-		7'b0_000_010: 
-			begin
-				alu_control_values = 4'b0_001;
-			end
 			
 		// LOAD WORD
 		7'b0_001_010: 
 			begin
 				alu_control_values = 4'b0_000;
-			end
-
-		// LESS THAN U
-		7'b0_000_011: 
-			begin
-				alu_control_values = 4'b0_001;
 			end
 			
 		// XOR
@@ -85,7 +74,7 @@ always@(selector)begin
 			end
 			
 		// BRANCH <
-		7'b0_001_100: 
+		7'bX_001_100: 
 			begin
 				alu_control_values = 4'b0_001;
 			end
@@ -103,7 +92,7 @@ always@(selector)begin
 			end
 			
 		// BRANCH >=
-		7'b0_001_101: 
+		7'bX_001_101: 
 			begin
 				alu_control_values = 4'b0_001;
 			end

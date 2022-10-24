@@ -11,7 +11,7 @@
 * Date:
 *	16/08/2021
 ******************************************************************/
-module Immediate_Unit
+	module Immediate_Unit
 (   
 	input [6:0] op_i,
 	input [31:0]  Instruction_bus_i,
@@ -32,7 +32,10 @@ always@(Instruction_bus_i) begin
 			begin
 				Immediate_o = {12'h0000,Instruction_bus_i[31:12]};
 			end
-			
+		7'h63:
+			begin
+				Immediate_o = {{10{Instruction_bus_i[31:25]}}, Instruction_bus_i[11:7]};
+			end
 		default:
 			begin
 				Immediate_o = 0;

@@ -43,7 +43,7 @@ always@(OP_i) begin
 	
 		I_logic_type:
 			begin
-				control_values = 9'b0_0100_1_000;
+				control_values = 9'b0_0001_1_000;
 			end
 			
 		S_type:
@@ -70,13 +70,13 @@ assign Branch_o = control_values[8];
 
 assign Mem_to_Reg_o = control_values[7];
 
-assign Reg_Write_o = control_values[6];
+assign Mem_Read_o = control_values[6];
 
-assign Mem_Read_o = control_values[5];
+assign Mem_Write_o = control_values[5];
 
-assign Mem_Write_o = control_values[4];
+assign ALU_Src_o = control_values[4];
 
-assign ALU_Src_o = control_values[3];
+assign Reg_Write_o = control_values[3];
 
 assign ALU_Op_o = control_values[2:0];	
 
