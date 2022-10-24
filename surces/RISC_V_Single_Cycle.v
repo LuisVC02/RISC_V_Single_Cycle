@@ -65,6 +65,8 @@ wire [31:0] inmmediate_data_w;
 
 /**ALU**/
 wire [31:0] alu_result_w;
+wire Zero_o;
+wire Carry_o;
 
 /**Multiplexer MUX_DATA_OR_IMM_FOR_ALU**/
 wire [31:0] read_data_2_or_imm_w;
@@ -74,6 +76,16 @@ wire [3:0] alu_operation_w;
 
 /**Instruction Bus**/	
 wire [31:0] instruction_bus_w;
+
+//Branch selector ----------------------
+wire and_branch;
+wire mux_branch_o;
+wire not_Zero;
+wire not_Carry;
+wire both;
+
+//Include jal --------------------------
+wire jump_or;
 
 
 //******************************************************************/
@@ -151,7 +163,7 @@ Multiplexer_2_to_1
 )
 MUX_FOR_4_INM_REG
 (
-	.Selector_i(branch_w),
+	.Selector_i(jump_or),
 	.Mux_Data_0_i(pc_plus_4_w),
 	.Mux_Data_1_i(mux_inm_reg),
 	
@@ -175,6 +187,24 @@ MUX_FOR_INM_REG
 );
 
 // -----------------------------------------
+
+// Branch mux -------------------------------------------
+assign not_Zero = ~Zero_o;
+assign not_Carry = ~Carry_o;
+assign both = not_Zero | not_Carry;
+assign and_branch = branch_w & mux_branch_o;
+assign jump_or = and_branch | 1'b0;
+
+Multiplexer_4_to_1
+Branch_mux
+(
+	.selector({instruction_bus_w[14], instruction_bus_w[12]}),
+	.a(Zero_o),
+	.b(not_Zero),
+	.c(Carry_o),
+	.d(both),
+	.out(mux_branch_o)
+);
 
 //******************************************************************/
 //******************************************************************/
@@ -228,7 +258,7 @@ MUX_DATA_OR_IMM_FOR_ALU
 ALU_Control
 ALU_CONTROL_UNIT
 (
-	.funct7_i(instruction_bus_w[29]),
+	.funct7_i(instruction_bus_w[30]),
 	.ALU_Op_i(alu_op_w),
 	.funct3_i(instruction_bus_w[14:12]),
 	.ALU_Operation_o(alu_operation_w)
@@ -241,6 +271,8 @@ ALU
 ALU_UNIT
 (
 	.ALU_Operation_i(alu_operation_w),
+	.Zero_o(Zero_o),
+	.Carry_o(Carry_o),
 	.A_i(read_data_1_w),
 	.B_i(read_data_2_or_imm_w),
 	.ALU_Result_o(alu_result_w)

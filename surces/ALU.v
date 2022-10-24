@@ -20,6 +20,7 @@ module ALU
 	input signed [31:0] A_i,
 	input signed [31:0] B_i,
 	output reg Zero_o,
+	output reg Carry_o,
 	output reg [31:0] ALU_Result_o
 );
 
@@ -40,31 +41,37 @@ module ALU
 			suma:
 				begin
 					ALU_Result_o = A_i + B_i;
+					Carry_o = 1'b0;
 				end
 				
 			resta:
 				begin
 					ALU_Result_o = A_i - B_i;
+					Carry_o = (A_i < B_i) ? 1'b1 : 1'b0;
 				end
 				
 			AND:
 				begin
 					ALU_Result_o = A_i & B_i;
+					Carry_o = 1'b0;
 				end
 				
 			OR:
 				begin
 					ALU_Result_o = A_i | B_i;
+					Carry_o = 1'b0;
 				end
 				
 			NOT:
 				begin
 					ALU_Result_o = ~A_i;
+					Carry_o = 1'b0;
 				end
 				
 			XOR:
 				begin
 					ALU_Result_o = A_i ^ B_i;
+					Carry_o = 1'b0;
 				end
 			
 			Corrimiento_Iz:
@@ -104,6 +111,7 @@ module ALU
 						6'h1f: ALU_Result_o = {A_i[0], 31'h00000000};
 						default: ALU_Result_o = 32'h00000000;
 					endcase
+					Carry_o = 1'b0;
 				end
 			
 			Corrimiento_De:
@@ -143,19 +151,25 @@ module ALU
 						6'h1f: ALU_Result_o = {31'h00000000, A_i[31]};
 						default: ALU_Result_o = 32'h00000000;
 					endcase
+					Carry_o = 1'b0;
 				end
 			
 			Corrimiento_De_S:
 				begin
 					ALU_Result_o = {A_i,12'h000};
+					Carry_o = 1'b0;
 				end
 			
 			Corrimiento_lui:
 				begin
 					ALU_Result_o = {B_i[19:0],12'h000};
+					Carry_o = 1'b0;
 				end
 		default:
-			ALU_Result_o = 0;
+			begin
+				ALU_Result_o = 0;
+				Carry_o = 1'b0;
+			end
 		endcase // case(control)
 		
 		Zero_o = (ALU_Result_o == 0) ? 1'b1 : 1'b0;
