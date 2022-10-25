@@ -153,13 +153,7 @@ module ALU
 					endcase
 					Carry_o = 1'b0;
 				end
-			
-			Corrimiento_De_S:
-				begin
-					ALU_Result_o = {A_i,12'h000};
-					Carry_o = 1'b0;
-				end
-			
+				
 			Corrimiento_lui:
 				begin
 					ALU_Result_o = {B_i[19:0],12'h000};

@@ -38,9 +38,12 @@ always@(OP_i) begin
 	case(OP_i)//                          876_54_3_210		
 		R_type:
 			begin
-				control_values = 9'b0_0100_0_000;
+				control_values = 9'b0_0100_1_000;
 			end
-	
+		I_charge_type:
+			begin
+				control_values = 9'b0_1101_1_000;
+			end
 		I_logic_type:
 			begin
 				control_values = 9'b0_0001_1_000;
@@ -48,7 +51,7 @@ always@(OP_i) begin
 			
 		S_type:
 			begin
-				control_values = 9'b0_0001_0_000;
+				control_values = 9'b0_0011_0_000;
 			end
 			
 		B_type:
@@ -58,7 +61,7 @@ always@(OP_i) begin
 			
 		U_type:
 			begin
-				control_values = 9'b0_0100_1_010;
+				control_values = 9'b0_0001_1_010;
 			end
 
 		default:

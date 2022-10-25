@@ -77,6 +77,12 @@ wire [3:0] alu_operation_w;
 /**Instruction Bus**/	
 wire [31:0] instruction_bus_w;
 
+/**Data_memory**/
+wire Mem_write_i;
+wire Mem_read_i;
+wire [31:0]Read_data_o;
+wire [31:0]Write_data_to_reg;
+
 //Branch selector ----------------------
 wire and_branch;
 wire mux_branch_o;
@@ -211,7 +217,41 @@ Branch_mux
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
+// Memoria de datos -----------------------------------------------
+Multiplexer_2_to_1
+#(
+	.NBits(32)
+)
+MUX_FOR_ALU_OR_MEM_TO_REG
+(
+	.Selector_i(mem_to_reg_w),
+	.Mux_Data_0_i(alu_result_w),
+	.Mux_Data_1_i(Read_data_o),
+	
+	.Mux_Output_o(Write_data_to_reg)
 
+);
+
+Data_Memory 
+RAM
+(
+	.clk(clk),
+	.Mem_Write_i(mem_write_w),
+	.Mem_Read_i(mem_read_w),
+	.Write_Data_i(read_data_2_w),
+	.Address_i(alu_result_w),
+
+	.Read_Data_o(Read_data_o)
+);
+
+
+
+
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
 
 
 Register_File
@@ -223,7 +263,7 @@ REGISTER_FILE_UNIT
 	.Write_Register_i(instruction_bus_w[11:7]),
 	.Read_Register_1_i(instruction_bus_w[19:15]),
 	.Read_Register_2_i(instruction_bus_w[24:20]),
-	.Write_Data_i(alu_result_w),
+	.Write_Data_i(Write_data_to_reg),
 	.Read_Data_1_o(read_data_1_w),
 	.Read_Data_2_o(read_data_2_w)
 
