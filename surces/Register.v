@@ -11,7 +11,8 @@
 ******************************************************************/
 module Register
 #(
-	parameter N = 32
+	parameter N = 32,
+	parameter start_value = 0
 )
 (
 	input clk,
@@ -23,9 +24,11 @@ module Register
 	output reg [N-1:0] DataOutput
 );
 
+
+
 always@(negedge reset or posedge clk) begin
 	if(reset==0)
-		DataOutput <= 0;
+		DataOutput <= start_value;
 	else	
 		if(enable==1)
 			DataOutput<=DataInput;

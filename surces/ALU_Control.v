@@ -31,7 +31,7 @@ assign selector = {funct7_i, ALU_Op_i, funct3_i};
 always@(selector)begin
 	casex(selector)
 		// SUMA
-		7'b0_000_000:
+		7'b0_000_000, 7'bX_001_000:
 			begin
 				alu_control_values = 4'b0_000;
 			end
@@ -43,19 +43,19 @@ always@(selector)begin
 			end
 			
 		// BRANCH
-		7'bX_001_000: 
+		7'bX_010_000: 
 			begin	
 				alu_control_values = 4'b0_001;
 			end
 			
 		// CORRIMIENTO IZQUIERDA
-		7'b0_000_001: 
+		7'b0_00X_001: 
 			begin
 				alu_control_values = 4'b0_110;
 			end
 			
 		// BRANCH !=
-		7'bX_001_001: 
+		7'bX_010_001: 
 			begin
 				alu_control_values = 4'b0_001;
 			end
@@ -68,61 +68,43 @@ always@(selector)begin
 			end
 			
 		// XOR
-		7'b0_000_100: 
+		7'b0_00X_100: 
 			begin
 				alu_control_values = 4'b0_100;
 			end
 			
 		// BRANCH <
-		7'bX_001_100: 
+		7'bX_010_100: 
 			begin
 				alu_control_values = 4'b0_001;
 			end
 			
 		// CORRIMIENTO DERECHA NORMAL
-		7'b0_000_101: 
+		7'b0_00X_101: 
 			begin
 				alu_control_values = 4'b0_111;
 			end
 			
-		// CORRIMIENTO DERECHA CON SIGNO
-		7'b1_000_101: 
-			begin
-				alu_control_values = 4'b1_000;
-			end
-			
 		// BRANCH >=
-		7'bX_001_101: 
+		7'bX_010_101: 
 			begin
 				alu_control_values = 4'b0_001;
 			end
 		
 		// OR
-		7'b0_000_110: 
+		7'b0_00X_110: 
 			begin
 				alu_control_values = 4'b0_011;
 			end
 			
-		// BRANCH < SIN SIGNO
-		7'b0_001_110: 
-			begin
-				alu_control_values = 4'b0_000;
-			end
-			
 		// AND
-		7'b0_000_111: 
+		7'b0_00X_111: 
 			begin
 				alu_control_values = 4'b0_010;
 			end
 			
-		// BRANCH >= SIN SIGNO
-		7'b0_001_111: 
-			begin
-				alu_control_values = 4'b0_001;
-			end
-			
 		// LUI
-		7'b0_010_000: 
+		7'b0_011_000: 
 			begin
 				alu_control_values = 4'b1_001;
 			end

@@ -16,6 +16,7 @@ module Control
 	input [6:0]OP_i,
 	
 	
+	output Jal_o,
 	output Branch_o,
 	output Mem_Read_o,
 	output Mem_to_Reg_o,
@@ -31,43 +32,55 @@ localparam I_charge_type = 7'b0000011;
 localparam S_type = 7'b0100011;
 localparam B_type = 7'b1100011;
 localparam U_type = 7'b0110111;
+localparam J_type = 7'b1101111;
+localparam I_jal_type = 7'b1100111;
 
-reg [8:0] control_values;
+reg [9:0] control_values;
 
 always@(OP_i) begin
 	case(OP_i)//                          876_54_3_210		
 		R_type:
 			begin
-				control_values = 9'b0_0100_1_000;
+				control_values = 10'b00_0100_1_000;
 			end
 		I_charge_type:
 			begin
-				control_values = 9'b0_1101_1_000;
+				control_values = 10'b00_1101_1_000;
 			end
 		I_logic_type:
 			begin
-				control_values = 9'b0_0001_1_000;
+				control_values = 10'b00_0001_1_001;
 			end
 			
 		S_type:
 			begin
-				control_values = 9'b0_0011_0_000;
+				control_values = 10'b00_0011_0_000;
 			end
 			
 		B_type:
 			begin
-				control_values = 9'b1_0000_1_001;
+				control_values = 10'b01_0000_1_010;
 			end
 			
 		U_type:
 			begin
-				control_values = 9'b0_0001_1_010;
+				control_values = 10'b00_0001_1_011;
 			end
-
+		J_type:
+			begin
+				control_values = 10'b10_0001_1_000;
+			end
+		I_jal_type:
+			begin
+				control_values = 10'b10_0001_1_000;
+			end
+			
 		default:
-			control_values= 9'b000_00_000;
+			control_values= 10'b00_0000_0_000;
 		endcase
 end	
+
+assign Jal_o = control_values[9];
 
 assign Branch_o = control_values[8];
 

@@ -19,22 +19,32 @@
    output reg [31:0] Immediate_o
 );
 
+localparam I_type = 7'h13;
+localparam U_type = 7'h37;
+localparam B_type = 7'h63;
+localparam Jal_type = 7'h6f;
+localparam Jalr_type = 7'h67;
 
 
 always@(Instruction_bus_i) begin
 	case(op_i)
-		7'h13:
+		I_type, Jalr_type:
 			begin
 				Immediate_o = {{20{Instruction_bus_i[31]}},Instruction_bus_i[31:20]};// I format
 			end
 			
-		7'h37:
+		U_type:
 			begin
 				Immediate_o = {12'h0000,Instruction_bus_i[31:12]};
 			end
-		7'h63:
+		B_type:
 			begin
-				Immediate_o = {{10{Instruction_bus_i[31:25]}}, Instruction_bus_i[11:7]};
+				//Immediate_o = {{10{Instruction_bus_i[31:25]}}, Instruction_bus_i[11:7]};
+				Immediate_o = {{20{Instruction_bus_i[31]}},Instruction_bus_i[7], Instruction_bus_i[30:25], Instruction_bus_i[11:8], 1'b0};
+			end
+		Jal_type: //JAL
+			begin
+				Immediate_o = {{12{Instruction_bus_i[31]}}, Instruction_bus_i[19:12],Instruction_bus_i[20], Instruction_bus_i[30:21], 1'b0};
 			end
 		default:
 			begin

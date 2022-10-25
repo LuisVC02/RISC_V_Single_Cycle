@@ -91,7 +91,11 @@ wire not_Carry;
 wire both;
 
 //Include jal --------------------------
+wire Jal_type;
 wire jump_or;
+wire plus_reg;
+wire [31:0]data_write_reg;
+
 
 
 //******************************************************************/
@@ -105,6 +109,7 @@ CONTROL_UNIT
 	/****/
 	.OP_i(instruction_bus_w[6:0]),
 	/** outputus**/
+	.Jal_o(Jal_type),
 	.Branch_o(branch_w),
 	.ALU_Op_o(alu_op_w),
 	.ALU_Src_o(alu_src_w),
@@ -145,14 +150,6 @@ PC_PLUS_INM
 	.Result(pc_plus_inm)
 );
 
-Adder_32_Bits //  Sumador de inmediatos al program counter
-PC_PLUS_REG
-(
-	.Data0(pc_plus_inm),
-	.Data1(read_data_1_w),
-	
-	.Result(pc_plus_inm_reg)
-);
 
 PC_Register
 PC(
@@ -177,16 +174,19 @@ MUX_FOR_4_INM_REG
 
 );
 
-// Multiplexor de inmediato o registro -----
+// Multiplexor de inmediato y registro -----
+
+assign plus_reg = Jal_type & ~instruction_bus_w[3];
+
 Multiplexer_2_to_1
 #(
 	.NBits(32)
 )
 MUX_FOR_INM_REG
 (
-	.Selector_i(0),
+	.Selector_i(plus_reg),
 	.Mux_Data_0_i(pc_plus_inm),
-	.Mux_Data_1_i(pc_plus_inm_reg),
+	.Mux_Data_1_i(alu_result_w),
 	
 	.Mux_Output_o(mux_inm_reg)
 
@@ -197,9 +197,9 @@ MUX_FOR_INM_REG
 // Branch mux -------------------------------------------
 assign not_Zero = ~Zero_o;
 assign not_Carry = ~Carry_o;
-assign both = not_Zero | not_Carry;
+assign both = Zero_o | not_Carry;
 assign and_branch = branch_w & mux_branch_o;
-assign jump_or = and_branch | 1'b0;
+assign jump_or = and_branch | Jal_type;
 
 Multiplexer_4_to_1
 Branch_mux
@@ -211,6 +211,23 @@ Branch_mux
 	.d(both),
 	.out(mux_branch_o)
 );
+
+// Implementacion del Jal ------------------------------------------
+
+Multiplexer_2_to_1
+#(
+	.NBits(32)
+)
+MUX_DATA_REG_W_PC_ALU
+(
+	.Selector_i(Jal_type),
+	.Mux_Data_0_i(Write_data_to_reg),
+	.Mux_Data_1_i(pc_plus_4_w),
+	
+	.Mux_Output_o(data_write_reg)
+
+);
+
 
 //******************************************************************/
 //******************************************************************/
@@ -263,7 +280,7 @@ REGISTER_FILE_UNIT
 	.Write_Register_i(instruction_bus_w[11:7]),
 	.Read_Register_1_i(instruction_bus_w[19:15]),
 	.Read_Register_2_i(instruction_bus_w[24:20]),
-	.Write_Data_i(Write_data_to_reg),
+	.Write_Data_i(data_write_reg),
 	.Read_Data_1_o(read_data_1_w),
 	.Read_Data_2_o(read_data_2_w)
 
