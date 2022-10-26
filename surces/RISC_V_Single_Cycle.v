@@ -96,6 +96,11 @@ wire jump_or;
 wire plus_reg;
 wire [31:0]data_write_reg;
 
+// Multiplicacion ----------------------
+wire [31:0]mul_result;
+wire [31:0] data_to_reg;
+wire mul_and;
+wire mul_control;
 
 
 //******************************************************************/
@@ -109,6 +114,7 @@ CONTROL_UNIT
 	/****/
 	.OP_i(instruction_bus_w[6:0]),
 	/** outputus**/
+	.Mul_o(mul_control),
 	.Jal_o(Jal_type),
 	.Branch_o(branch_w),
 	.ALU_Op_o(alu_op_w),
@@ -280,7 +286,7 @@ REGISTER_FILE_UNIT
 	.Write_Register_i(instruction_bus_w[11:7]),
 	.Read_Register_1_i(instruction_bus_w[19:15]),
 	.Read_Register_2_i(instruction_bus_w[24:20]),
-	.Write_Data_i(data_write_reg),
+	.Write_Data_i(data_to_reg),
 	.Read_Data_1_o(read_data_1_w),
 	.Read_Data_2_o(read_data_2_w)
 
@@ -335,7 +341,27 @@ ALU_UNIT
 	.ALU_Result_o(alu_result_w)
 );
 
+//*************************** Modulo multiplicador ******************************************
+assign mul_and = mul_control & instruction_bus_w[25];
+Multiplicador 
+Multiplicator
+(
+	.a_i(read_data_1_w),
+	.b_i(read_data_2_w),
+	
+	.result(mul_result)
+);
 
+mulSelector
+mux_for_mul
+(
+	.selection(mul_and),
+	.data_1(data_write_reg),
+	.data_2(mul_result),
+	
+	.data_out(data_to_reg)
+
+);
 
 
 endmodule
