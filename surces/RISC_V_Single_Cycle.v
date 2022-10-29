@@ -20,13 +20,15 @@
 module RISC_V_Single_Cycle
 #(
 	parameter PROGRAM_MEMORY_DEPTH = 64,
-	parameter DATA_MEMORY_DEPTH = 128
+	parameter DATA_MEMORY_DEPTH = 256
 )
 
 (
 	// Inputs
 	input clk,
-	input reset
+	input reset,
+	
+	output [31:0]     Write_Data_out
 
 );
 //******************************************************************/
@@ -255,7 +257,10 @@ MUX_FOR_ALU_OR_MEM_TO_REG
 
 );
 
-Data_Memory 
+Data_Memory
+#(
+	.MEMORY_DEPTH(DATA_MEMORY_DEPTH)
+)
 RAM
 (
 	.clk(clk),
@@ -363,6 +368,8 @@ mux_for_mul
 
 );
 
+// Salida para calculo de clk_rate
+assign Write_Data_out = Write_data_to_reg;
 
 endmodule
 

@@ -77,7 +77,7 @@ Register_ra
 Register
 #
 (
-	.start_value(32'hfff)
+	.start_value(32'h000003ff)
 )
 Register_sp
 (
