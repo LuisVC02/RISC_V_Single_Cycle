@@ -369,7 +369,7 @@ mux_for_mul
 );
 
 // Salida para calculo de clk_rate
-assign Write_Data_out = Write_data_to_reg;
+assign Write_Data_out = data_to_reg;
 
 endmodule
 
